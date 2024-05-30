@@ -23,7 +23,7 @@ passport.use(
         // console.log(password, user.hashedpassword);
         bcrypt.compare(password, user.hashedpassword, (err, result) => {
           if (err) {
-            console.error(err, "Error comparing passwords", err);
+            console.error("Error comparing passwords", err);
             return cb(err);
           } else {
             if (result) {

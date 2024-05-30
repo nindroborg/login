@@ -3,7 +3,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import passport from "passport";
 import "../config/passport.js";
-import { createJWT, saveJwtToDb } from "../lib/jwtUtils.js";
 
 const router = express.Router();
 
@@ -41,45 +40,5 @@ router.get(
     res.send(html);
   }
 );
-
-// Submit Login Page
-router.post("/", (req, res, next) => {
-  passport.authenticate("local", async (error, user, info) => {
-    if (error) {
-      next(error);
-      res.redirect("login/failed");
-    }
-    if (user) {
-      try {
-        // create JWT and save to Database
-        const payload = {
-          sub: user.userid,
-          username: user.username,
-          iat: Date.now(),
-        };
-        const { signedToken, expiresIn } = createJWT(payload);
-        console.log(signedToken, expiresIn);
-        await saveJwtToDb(user.userid, signedToken);
-        const JwtToken = "Bearer " + signedToken;
-
-        res.status(200).json({
-          success: true,
-          userid: user.userid,
-          username: user.username,
-          token: JwtToken,
-          expiresIn: expiresIn,
-        });
-      } catch (error) {
-        console.log(error);
-        return next(error);
-      }
-    } else {
-      res.status(401).json({
-        success: false,
-        msg: "You are not authorized to view this resource",
-      });
-    }
-  })(req, res, next);
-});
 
 export default router;
