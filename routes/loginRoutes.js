@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import passport from "passport";
 import "../config/passport.js";
+import axios from "axios";
 
 const router = express.Router();
 
@@ -40,5 +41,22 @@ router.get(
     res.send(html);
   }
 );
+
+// Post username and password to the login API
+router.post("/", async (req, res) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  };
+
+  const response = await axios.post(
+    "http://localhost:4001/login",
+    req.body,
+    config
+  );
+  //console.log(response.data);
+  res.send(response.data);
+});
 
 export default router;

@@ -44,14 +44,14 @@ app.post("/register", async (req, res) => {
       password.length < passwordMinLength ||
       !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(username)
     ) {
-      return res.status(409).json({
+      return res.json({
         success: false,
         msg: "Your credentials doesn't fulfill our criteria!",
       });
     }
     const doesUserAlreadyExist = await getUserFromDb(username);
     if (doesUserAlreadyExist.rows.length > 0) {
-      return res.status(409).json({
+      return res.json({
         success: false,
         msg: "Account already exists",
       });
@@ -66,7 +66,7 @@ app.post("/register", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    return res.json({
       success: false,
       msg: "Ooops! Something went wrong on the server!",
     });
@@ -78,7 +78,7 @@ app.post("/login", (req, res, next) => {
   passport.authenticate("local", async (error, user, info) => {
     if (error) {
       next(error);
-      return res.status(500).json({
+      return res.json({
         success: false,
         msg: error.message,
       });
@@ -96,7 +96,7 @@ app.post("/login", (req, res, next) => {
         await saveJwtToDb(user.userid, signedToken);
         const JwtToken = "Bearer " + signedToken;
 
-        return res.status(200).json({
+        return res.json({
           success: true,
           userid: user.userid,
           username: user.username,
@@ -105,13 +105,13 @@ app.post("/login", (req, res, next) => {
         });
       } catch (error) {
         console.log(error);
-        return res.status(500).json({
+        return res.json({
           success: false,
           msg: error.message,
         });
       }
     } else {
-      res.status(401).json({
+      res.json({
         success: false,
         msg: "You are not authorized to view this resource",
       });

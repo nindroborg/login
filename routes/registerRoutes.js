@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import axios from "axios";
 
 const router = express.Router();
 
@@ -22,6 +23,23 @@ router.get("/success", async (req, res) => {
 router.get("/failed", async (req, res) => {
   console.log("Sign Up failed!");
   res.send("Sign Up failed!");
+});
+
+// Post email and password to the register API
+router.post("/", async (req, res) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  };
+
+  const response = await axios.post(
+    "http://localhost:4001/register",
+    req.body,
+    config
+  );
+  //console.log(response.data);
+  res.send(response.data);
 });
 
 export default router;
